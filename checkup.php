@@ -9,9 +9,12 @@
 	<style>
 pre {
     overflow-x: auto;
-	max-width: 60vw;
 }
 
+[class^="col"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
 pre code {
     word-wrap: normal;
     white-space: pre;
@@ -89,6 +92,7 @@ $services[] = array("port" => "8083",     "service" => "Vesta panel",           
 
 //begin table for status
 $data .= "<small><table  class='table table-striped table-sm '><thead><tr><th>Service</th><th>Port</th><th>Status</th></tr></thead>";
+$data .= "<tbody>";
 foreach ($services  as $service) {
 	if($service['ip']==""){
 	   $service['ip'] = "localhost";
@@ -106,7 +110,7 @@ foreach ($services  as $service) {
 
 }  
 //close table
-$data .= "</table></small>";
+$data .= "</tbody></table></small>";
 $data .= '
   </div>
 </div>
@@ -123,15 +127,14 @@ echo $data;
 
 $data1 = "";
 $data1 .= '
-<div class="card mb-2">
+<div class="card my-2">
   <h4 class="card-header text-center">
     Server information
   </h4>
   <div class="card-body">
 ';
 
-$data1 .= "<table  class='table table-sm mb-0'>";
-// $data1 .= "<div class='table-responsive'><table  class='table table-sm mb-0'>";
+$data1 .= "<div class='container'>";
 
 //GET SERVER LOADS
 $loadresult = @exec('uptime');  
@@ -228,8 +231,8 @@ $top_mem = "<pre class='mb-0 '><code>" . $top_mem . "</code></pre>";
 $top_cpu = implode('<br/>', $top_cpu_use );
 $top_cpu = "<pre class='mb-0 '><code>" . $top_cpu. "</code></pre>";
 
-$data1 .= "<tr><td>Average load</td><td><h5>". badge($avgs[1],'secondary'). ' ' .badge($avgs[2], 'secondary') . ' ' . badge( $avgs[3], 'secondary') . " </h5></td>\n";
-$data1 .= "<tr><td>Uptime</td><td>$uptime                     </td></tr>";
+$data1 .= '<div class="row"><div class="col-sm-3 col-lg-2 h5">Average load</div><div class="col-sm"><h5>'. badge($avgs[1],'secondary'). ' ' .badge($avgs[2], 'secondary') . ' ' . badge( $avgs[3], 'secondary') . '</h5></div></div>';
+$data1 .= '<div class="row"><div class="col-sm-3 col-lg-2 h5">Uptime</div><div class="col-sm">'.$uptime.'</div></div>';
 
 
 $disks = array();
@@ -242,14 +245,15 @@ $disks[] = array("name" => "local" , "path" => getcwd()) ;
 // $disks[] = array("name" => "Your disk name" , "path" => '/mount/point/to/that/disk') ;
 
 
-$data1 .= "<tr><td>Disk free        </td><td>" . get_disk_free_status($disks) . "</td></tr>";
+$data1 .= '<div class="row"><div class="col-sm-3 col-lg-2 h5">Disk free        </div><div class="col-sm">' . get_disk_free_status($disks) . "</div></div>";
 
-$data1 .= "<tr><td>RAM free        </td><td>". format_storage_info($total_mem *1024, $free_mem *1024, '') ."</td></tr>";
-$data1 .= "<tr><td>Top RAM user    </td><td><small>$top_mem</small></td></tr>";
-$data1 .= "<tr><td>Top CPU user    </td><td><small>$top_cpu</small></td></tr>";
+$data1 .= '<div class="row"><div class="col-sm-3 col-lg-2 h5">RAM free        </div><div class="col-sm">'. format_storage_info($total_mem *1024, $free_mem *1024, '') ."</div></div>";
+$data1 .= '<hr>';
+$data1 .= '<div class="row h5">Top RAM user    </div><div class="row overflow-auto"><pre>'.$top_mem.'</pre></div>';
+$data1 .= '<hr>';
+$data1 .= '<div class="row h5">Top CPU user    </div><div class="row overflow-auto"><pre>'.$top_cpu.'</pre></div>';
 
-$data1 .= "</table>";
-// $data1 .= '  </div></div>';
+$data1 .= '  </div>';
 $data1 .= '  </div>';
 echo $data1;  
 
@@ -273,7 +277,7 @@ $data2 .=  '
 ';
 
 
-$data2 .="<span class=' d-block'><pre class='d-inline-block text-left'><small>";
+$data2 .="<span class=' d-block overflow-auto'><pre class='d-inline-block text-left'>";
 $traffic_arr = array();
 exec('vnstat -' . escapeshellarg( $_GET['showtraffic'] ), $traffic_arr, $status);
 
@@ -292,9 +296,9 @@ Jan '19    269.01 GiB |    1.39 TiB |    1.65 TiB |    7.51 Mbit/s
 estimated    371.92 GiB |    1.92 TiB |    2.29 TiB |
 ";
 /// for real
-$traffic = implode("\n", $traffic_arr);
+//$traffic = implode("\n", $traffic_arr);
 
-$data2 .="$traffic</small></pre></span>";
+$data2 .="$traffic</pre></span>";
 
 echo $data2;
 ?>
